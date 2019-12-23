@@ -52,7 +52,7 @@ const card = function()
             parent_node.removeAllChildren();
         }
 
-        ary.cardSort();
+        //ary.cardSort();
         for(let i = 0 ; i < ary.length ; i++)
         {
             let node = cc.instantiate(cardPrefab);
@@ -109,19 +109,27 @@ const card = function()
     that.updataHandByAry = function(ary)
     {
         myHandAry = ary
+        let my = myHandAry.cardSort(0)
         updataCard(cc.find("Canvas/bg/my/hand"),myHandAry);
     };
 
     that.updataMyOut = function(ary)
     {
+        
+        ary = myHandUpAry//test
+        ary.cardSort(1);
         updataCard(cc.find("Canvas/bg/my/out"),ary);
     };
     that.updataLeftOut = function(ary)
     {
+        
+        ary = myHandUpAry//test
         updataCard(cc.find("Canvas/bg/left/out"),ary);
     };
     that.updataRightOut = function(ary)
     {
+        
+        ary = myHandUpAry//test
         updataCard(cc.find("Canvas/bg/right/out"),ary);
     };
 

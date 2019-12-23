@@ -48,6 +48,8 @@ cc.Class({
     {
         //出牌
         global.card.playCard();
+        global.card.updataLeftOut();
+        global.card.updataRightOut();
         cc.log("出牌")
         this.playControlNode.active = false;
         cc.log(this.playControlNode)

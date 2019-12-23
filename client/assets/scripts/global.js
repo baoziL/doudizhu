@@ -48,9 +48,9 @@ String.prototype.format = function(args) {
     } 
 };
 /** 
-    !#zh 卡牌排序 
+    !#zh 卡牌排序  0 倒序 1 正序
 */
-Array.prototype.cardSort = function()
+Array.prototype.cardSort = function(nub)
 {
     this.sort(function (a,b)
     {
@@ -59,6 +59,14 @@ Array.prototype.cardSort = function()
             a = a%13
             b = b%13
         }
-        return b-a
+        if(nub)
+        {
+            return a-b
+        }
+        else
+        {
+            return b-a
+        }
+        
     });
 }
