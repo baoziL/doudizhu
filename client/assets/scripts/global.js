@@ -47,3 +47,18 @@ String.prototype.format = function(args) {
         return this; 
     } 
 };
+/** 
+    !#zh 卡牌排序 
+*/
+Array.prototype.cardSort = function()
+{
+    this.sort(function (a,b)
+    {
+        if(a < 52 && b < 52)
+        {
+            a = a%13
+            b = b%13
+        }
+        return b-a
+    });
+}

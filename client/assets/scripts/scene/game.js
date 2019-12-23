@@ -5,12 +5,15 @@ cc.Class({
     properties: {
 
         SpriteAtlas:cc.SpriteAtlas,
+
+        playControlNode:cc.Node,
         playCardNode:cc.Node,
         noPlayNode:cc.Node,
         timeNode:cc.Node,
         suggestNode:cc.Node,
-        playControlNode:cc.Node,
 
+        turn:0
+        
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -39,22 +42,32 @@ cc.Class({
             return ary
         }
         global.card.updataHandByAry(handArtTest())
-        cc.log(cc.find("Canvas/bg/my/myHand").children)
+        cc.log(cc.find("Canvas/bg/my/hand").children)
     },
     onPlayCardBtnClick()
     {
         //出牌
         global.card.playCard();
+        cc.log("出牌")
+        this.playControlNode.active = false;
+        cc.log(this.playControlNode)
     },
     onNoPlayBtnClick()
     {
         //不出
+        cc.log("不出牌")
     },
     onSuggestBtnClick()
     {
 
         //提示
+        cc.log("提示")
     },
+    //是否你的回合
+    isTurn()
+    {
+        this.playControlNode.active = true;
+    }
 
     // update (dt) {},
 });

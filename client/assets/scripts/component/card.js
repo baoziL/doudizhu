@@ -23,16 +23,18 @@ const card = function()
 
 
 
-    let updataMyHandAry = function()
+    let updataMyHandAry = function(ary)
     {
         myHandUpAry = []
-        let nodeAry = cc.find("Canvas/bg/my/myHand").children
+        let nodeAry = cc.find("Canvas/bg/my/hand").children
         for(let i = 0; i < nodeAry.length ; i++)
         {
             if(nodeAry[i].isUp)
             {myHandUpAry.push(nodeAry[i]._cardNub)}
         }
-        console.log(myHandUpAry)
+        console.log("要出的牌 " + myHandUpAry)
+        console.log("手牌 " + myHandAry)
+        return null
     };
 
     let getSpriteFrameByID = function(ID)
@@ -45,7 +47,12 @@ const card = function()
 
     let updataCard = function(parent_node,ary)
     {
-        parent_node.removeAllChildren();
+        if(ary != null)
+        {
+            parent_node.removeAllChildren();
+        }
+
+        ary.cardSort();
         for(let i = 0 ; i < ary.length ; i++)
         {
             let node = cc.instantiate(cardPrefab);
@@ -54,14 +61,22 @@ const card = function()
             node.parent = parent_node;
             node.isUp = false;
             node.position = cc.v2(0,0)
+            if(node.parent != cc.find("Canvas/bg/my/hand"))
+            {
+                node.getComponent(cc.Button).enabled = false;
+            }
             node.on(cc.Node.EventType.TOUCH_START,()=>
             {
-                node.isUp = !node.isUp
-                if(node.isUp) 
-                {node.position = cc.v2(0,20);}
-                else 
-                {node.position = cc.v2(0,0);}
-                updataMyHandAry()
+                if(node.parent == cc.find("Canvas/bg/my/hand"))
+                {
+                    node.isUp = !node.isUp
+                    if(node.isUp) 
+                    {node.position = cc.v2(0,20);}
+                    else 
+                    {node.position = cc.v2(0,0);}
+
+                    updataMyHandAry(ary)
+                }
             },this)
         };
     };
@@ -77,37 +92,37 @@ const card = function()
         {
             for(let j = 0 ; j < myHandUpAry.length ; j++)
             {
-                //bug手牌消失
-                cc.log(myHandAry)
-                if(myHandAry[i]._cardNub == myHandUpAry[j]._cardNub)
+                if(myHandAry[i] === myHandUpAry[j])
                 {
-                    myHandAry.splice(i,1)
-                    cc.log(myHandAry)
+                    cc.log(myHandAry[i]._cardNub + "=" + myHandUpAry[j]._cardNub)
+                    let nub = myHandAry.splice(i,1)
+                    cc.log("delet ：" + nub)
                 }
             }
         }
-        cc.log(myHandAry)
         that.updataMyOut(myHandUpAry)
+
         that.updataHandByAry(myHandAry)
 
     };
 
     that.updataHandByAry = function(ary)
     {
-        updataCard(cc.find("Canvas/bg/my/myHand"),ary);
+        myHandAry = ary
+        updataCard(cc.find("Canvas/bg/my/hand"),myHandAry);
     };
 
     that.updataMyOut = function(ary)
     {
-        updataCard(cc.find("Canvas/bg/my/myOut"),ary);
+        updataCard(cc.find("Canvas/bg/my/out"),ary);
     };
     that.updataLeftOut = function(ary)
     {
-
+        updataCard(cc.find("Canvas/bg/left/out"),ary);
     };
     that.updataRightOut = function(ary)
     {
-
+        updataCard(cc.find("Canvas/bg/right/out"),ary);
     };
 
 
