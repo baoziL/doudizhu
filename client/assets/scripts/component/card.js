@@ -86,6 +86,11 @@ const card = function()
 
     };
 
+    that.getMyHandUpAry = function()
+    {
+        return myHandUpAry;
+    }
+
     that.playCard = function()
     {
         for(let i = 0; i < myHandAry.length ; i++)
@@ -122,14 +127,10 @@ const card = function()
     };
     that.updataLeftOut = function(ary)
     {
-        
-        ary = myHandUpAry//test
         updataCard(cc.find("Canvas/bg/left/out"),ary);
     };
     that.updataRightOut = function(ary)
     {
-        
-        ary = myHandUpAry//test
         updataCard(cc.find("Canvas/bg/right/out"),ary);
     };
 

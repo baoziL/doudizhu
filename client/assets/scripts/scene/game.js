@@ -47,9 +47,9 @@ cc.Class({
     onPlayCardBtnClick()
     {
         //出牌
+        global.socketioController.emit({msgType:"playCard",
+    msg:global.card.getMyHandUpAry()},)
         global.card.playCard();
-        global.card.updataLeftOut();
-        global.card.updataRightOut();
         cc.log("出牌")
         this.playControlNode.active = false;
         cc.log(this.playControlNode)
@@ -61,10 +61,10 @@ cc.Class({
     },
     onSuggestBtnClick()
     {
-
         //提示
         cc.log("提示")
     },
+    
     //是否你的回合
     isTurn()
     {

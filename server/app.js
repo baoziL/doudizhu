@@ -1,7 +1,10 @@
 const global = require("./global.js");
 const socket = require("socket.io");
+const cardRule = require("./cardRule.js")
 
 const app = socket("3000");
+
+
 
 app.on("connection",function(socket)
 {
@@ -32,8 +35,9 @@ app.on("connection",function(socket)
             case "returnRoom":
                 console.log(msg)
                 break;
-            case "startGame":
+            case "playCard":
                 console.log(msg)
+                cb(JSON.stringify(msg));
                 break;
             case "createRoom":
                 console.log(msg)
