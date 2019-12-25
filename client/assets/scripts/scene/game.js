@@ -20,6 +20,29 @@ cc.Class({
 
     onLoad () {
 
+          
+        this._player = 
+        {
+            roomID:null,
+            uniquenID:null,
+            cards:null,
+            playCards:null,
+        }
+        this._player.uniquenID = global.socketioController.get_socketID()
+
+        global.socketioController.get_socket().on("String",function(res,cb)
+        {
+            console.log(res)
+        })
+
+        let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
+        global.socketioController.emit(msg);
+
+        //服务器监听
+        global.socketioController.on();
+
+
+
         this.playCardNode.on("click",this.onPlayCardBtnClick,this);
         this.noPlayNode.on("click",this.onNoPlayBtnClick,this);
         this.suggestNode.on("click",this.onSuggestBtnClick,this);
@@ -47,8 +70,14 @@ cc.Class({
     onPlayCardBtnClick()
     {
         //出牌
+        this._player.cards = global.card.getMyHandUpAry();
+        let msg = 
+        {
+            player:this._player,
+
+        }
         global.socketioController.emit({msgType:"playCard",
-    msg:global.card.getMyHandUpAry()},)
+    msg:msg},)
         global.card.playCard();
         cc.log("出牌")
         this.playControlNode.active = false;
