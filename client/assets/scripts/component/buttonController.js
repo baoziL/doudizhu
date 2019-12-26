@@ -13,9 +13,9 @@ const buttonController = function()
     {
         //初始化第一层
         that.firstFloor.push(cc.find("Canvas/bg/top/shezhi"))
-        that.firstFloor.push(cc.find("Canvas/bg/btn/createRoom"))
-        that.firstFloor.push(cc.find("Canvas/bg/btn/joinRoom"))
-        that.firstFloor.push(cc.find("Canvas/bg/btn/returnRoom"))
+        that.firstFloor.push(cc.find("Canvas/bg/gameOption/createRoom"))
+        that.firstFloor.push(cc.find("Canvas/bg/gameOption/joinRoom"))
+        that.firstFloor.push(cc.find("Canvas/bg/gameOption/returnRoom"))
 
     }
     that.checkNowFloor = function()

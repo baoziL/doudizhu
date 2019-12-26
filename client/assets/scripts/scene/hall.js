@@ -38,12 +38,16 @@ cc.Class({
         //初始化设置按钮 
         this.settingNode = cc.find("Canvas/bg/top/shezhi");
 
-        this.settingNode.addComponent(cc.Button);
-        cc.log(this.settingNode.getComponent(cc.Button).transition)
-        this.settingNode.getComponent(cc.Button).transition = cc.Button.Transition.SCALE;
+        if(this.settingNode){
 
+        this.settingNode.addComponent(cc.Button);
+        this.settingNode.getComponent(cc.Button).transition = cc.Button.Transition.SCALE;
         this.settingNode.on("click",this.onSettingBtnClick,this)
 
+        }
+        
+
+        
     },
     onSettingBtnClick()
     {

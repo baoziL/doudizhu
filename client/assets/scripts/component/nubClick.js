@@ -1,4 +1,4 @@
-const global = require("./global.js")
+const global = require("./../global.js")
 cc.Class({
     extends: cc.Component,
 
@@ -144,6 +144,7 @@ cc.Class({
         if(nubAry.length == 5 )
         {
             //创建房间 加入房间
+            this.createRoJoin(nubAry)
         }
 
     },
@@ -158,11 +159,12 @@ cc.Class({
     {
         if(this.node._tag == "createRoom")
         {
-            this.joinRoom(data);
+            this.createRoom(data);
+            
         }
         else if(this.node._tag == "joinRoom")
         {
-            this.createRoom(data);
+            this.joinRoom(data);
         };
 
         this.createNubAry = [];
@@ -170,12 +172,33 @@ cc.Class({
 
     },
     
-    joinRoom(data)
+    joinRoom(nub)
     {
+        let _player = 
+        {
+            roomID:null,
+            uniquenID:null,
+            cards:null,
+            playCards:null,
+        }
+        _player.uniquenID = global.socketioController.get_socketID()
+        let data = (ary)=>
+        {
+            let temp = "";
+            for(let i = 0 ; i< nub.length ; i++)
+            {
+                temp = temp + ary[i];
+            }
+            return temp;
+        }
+        let _roomID = data(nub);
+
+        global.roomController.roomID = _roomID
+        
         let _data = {
 
             msgType:"joinRoom",
-            msg:"我要加入一个房间 房间号：" + data
+            msg:{player:_player,roomID:_roomID}
         }
         global.socketioController.emit(_data)
         cc.director.loadScene("game.fire") 

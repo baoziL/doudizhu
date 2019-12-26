@@ -5,6 +5,7 @@ const buttonController = require("./component/buttonController")
 const socketioController = require("./component/socketioController")
 const player = require("./component/player.js")
 const card = require("./component/card")
+const roomController = require("./component/roomController")
 
 const global = {}
 
@@ -15,6 +16,7 @@ global.buttonController = buttonController();
 global.socketioController = socketioController();
 global.player = player();
 global.card = card();
+global.roomController = roomController();
 
 module.exports =  global;
 

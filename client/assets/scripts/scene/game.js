@@ -35,11 +35,11 @@ cc.Class({
             console.log(res)
         })
 
-        let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
-        global.socketioController.emit(msg);
+        // let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
+        //global.socketioController.emit(msg);
 
         //服务器监听
-        global.socketioController.on();
+        //global.socketioController.on();
 
 
 
@@ -70,14 +70,15 @@ cc.Class({
     onPlayCardBtnClick()
     {
         //出牌
+        
         this._player.cards = global.card.getMyHandUpAry();
         let msg = 
         {
             player:this._player,
-
+            roomID: global.roomController.roomID,
         }
         global.socketioController.emit({msgType:"playCard",
-    msg:msg},)
+        msg:msg},)
         global.card.playCard();
         cc.log("出牌")
         this.playControlNode.active = false;
