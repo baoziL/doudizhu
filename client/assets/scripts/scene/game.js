@@ -1,4 +1,5 @@
 const global = require("./../global.js")
+const player = require("./../component/player")
 cc.Class({
     extends: cc.Component,
 
@@ -12,7 +13,12 @@ cc.Class({
         timeNode:cc.Node,
         suggestNode:cc.Node,
 
-        turn:0
+        leftPlayerData:cc.Node,
+        rightPlayerData:cc.Node,
+        myPlayerData:cc.Node,
+
+        turn:0,
+        //游戏是否能开始
         
     },
 
@@ -24,22 +30,43 @@ cc.Class({
         this._player = 
         {
             roomID:null,
-            uniquenID:null,
+            uniqueID:null,
             cards:null,
             playCards:null,
         }
-        this._player.uniquenID = global.socketioController.get_socketID()
 
+        this._player.uniqueID = global.socketioController.get_socketID()
+
+        this.myPlayerData.getChildByName("playerID").getComponent(cc.Label).string = this._player.uniqueID
+        let upDataAotherPlayerData = function()
+        {
+            let strL = this.leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string
+            if(strL == null)
+            {
+                this.leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerID[0];
+            }
+            let strR= this.rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string
+            if(strR == null)
+            {
+                this.rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerID[1];
+            }
+        }
+
+        let playerID = [];
         global.socketioController.get_socket().on("String",function(res,cb)
         {
             console.log(res)
+            playerID.push(res)   
+            upDataAotherPlayerData();
+            //console.log(cb)
         })
+
 
         // let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
         //global.socketioController.emit(msg);
 
         //服务器监听
-        //global.socketioController.on();
+        //global.soc 5ketioController.on();
 
 
 
@@ -54,17 +81,17 @@ cc.Class({
     
     gameStart()
     {
-        let handArtTest = ()=>
-        {
-            let ary = []
-            for(let i = 17 ; i < 34 ; i++)
-            {
-                ary.push(i)
-            }
+        // let handArtTest = ()=>
+        // {
+        //     let ary = []
+        //     for(let i = 17 ; i < 34 ; i++)
+        //     {
+        //         ary.push(i)
+        //     }
 
-            return ary
-        }
-        global.card.updataHandByAry(handArtTest())
+        //     return ary
+        // }
+        //global.card.updataHandByAry()
         cc.log(cc.find("Canvas/bg/my/hand").children)
     },
     onPlayCardBtnClick()
@@ -72,6 +99,7 @@ cc.Class({
         //出牌
         
         this._player.cards = global.card.getMyHandUpAry();
+
         let msg = 
         {
             player:this._player,
@@ -93,6 +121,16 @@ cc.Class({
     {
         //提示
         cc.log("提示")
+    },
+    onGameStartBtn()
+    {
+        let msg =
+        {
+            roomID : player.playerData.roomID,
+            player : player.playerData,
+        }
+        global.socketioController.emit({msgType:"gameStart",
+        msg:msg},)
     },
     
     //是否你的回合

@@ -10,6 +10,7 @@ cc.Class({
         joinRoomBtnNode : cc.Node,
         returnRoomBtnNode : cc.Node,
         nubClickNode:cc.Prefab,
+
     },
 
     // LIFE-CYCLE CALLBACKS:

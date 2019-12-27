@@ -1,4 +1,5 @@
 const global = require("./../global.js")
+const player = require("./../component/player")
 cc.Class({
     extends: cc.Component,
 
@@ -6,6 +7,8 @@ cc.Class({
         //数字空格
         nubBox : [cc.Node],
         closeNode:cc.Node,
+        //是否能加入房间
+        isJoinRoom:null,
 
     },
 
@@ -174,15 +177,11 @@ cc.Class({
     
     joinRoom(nub)
     {
-        let _player = 
-        {
-            roomID:null,
-            uniquenID:null,
-            cards:null,
-            playCards:null,
-        }
-        _player.uniquenID = global.socketioController.get_socketID()
-        let data = (ary)=>
+        let _player = player;
+
+        //_player.uniqueID = global.socketioController.get_socketID()
+
+        let aryToString = (ary)=>
         {
             let temp = "";
             for(let i = 0 ; i< nub.length ; i++)
@@ -191,17 +190,34 @@ cc.Class({
             }
             return temp;
         }
-        let _roomID = data(nub);
+
+        let _roomID = aryToString(nub);
 
         global.roomController.roomID = _roomID
-        
+
         let _data = {
 
             msgType:"joinRoom",
             msg:{player:_player,roomID:_roomID}
         }
+
         global.socketioController.emit(_data)
-        cc.director.loadScene("game.fire") 
+
+        setTimeout(()=>
+        {
+            if(player.isJoinRoom)
+            {
+                cc.director.loadScene("game.fire") 
+            }
+            else
+            {
+                console.log("房间人数满了")
+            }
+            console.log(player.isJoinRoom);
+        },200
+        )
+
+
     },
     createRoom(data)
     {

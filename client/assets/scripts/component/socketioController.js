@@ -1,3 +1,4 @@
+const player = require("./../component/player")
 const socketioController = function()
 {
     let that = {};
@@ -11,7 +12,8 @@ const socketioController = function()
 
         console.log(_socket.id); // 'G5p5...'
         playerID = _socket.id;
-      });
+        player.playerData.uniqueID = _socket.id; //develop
+    })
 
     that.init = function()
     {
@@ -30,12 +32,33 @@ const socketioController = function()
         _socket.emit("notify",data,(cb)=>
         {
             let msgType = data.msgType
-            console.log(cb);
+
             switch(msgType)
             {
                 case "login":
 
                     break;
+
+                case "joinRoom":
+
+                    player.isJoinRoom = cb;
+                    break;
+                case "returnRoom":
+
+                    
+                    break;
+                case "createRoom":
+
+                    
+                    break;
+                case "playCard":
+
+
+                    break;
+                case "gameStart":
+
+                    player.isGameStart = cb;
+                    break;                      
 
                 default:
                     break;
