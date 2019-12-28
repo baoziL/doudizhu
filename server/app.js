@@ -3,7 +3,7 @@ const global = require("./global.js");
 const cardRule = require("./cardRule.js")
 const room = require("./room.js");
 
-
+//global.game.iniGame();//test
 
 
 global.soketioController.app.on("connection",function(socket)
@@ -36,6 +36,7 @@ socket.on("notify",function(res,cb)
 
             let result = global.roomController.checkRoom(msg.roomID)
             console.log("result : "+result)
+
             let _player = {
 
                 uniqueID: msg.player.uniqueID, 
@@ -72,6 +73,7 @@ socket.on("notify",function(res,cb)
                 console.log("global.roomController.rooms ↓↓↓")
                 
                 console.log(global.roomController.rooms)
+                //允许客户端进入game场景
                 cb(true);
 
             }
@@ -106,7 +108,19 @@ socket.on("notify",function(res,cb)
                         console.log("rooms: "+rooms); // [ <socket.id>, 'room 237' ]
         
                         //告知其他在同一房间的客户端
-                        socket.broadcast.to(msg.roomID).emit('joinRoom',msg.player.uniqueID)
+                        setTimeout(()=>
+                        {
+                            socket.emit('joinRoom',global.roomController.rooms[result].players);
+
+                            socket.to(msg.roomID).emit('joinRoom',global.roomController.rooms[result].players);
+
+                            if(global.roomController.rooms[result].players.length ==3)
+                            {
+                                console.log("房间人数等于3 告诉房主可以开始游戏了")
+                                socket.to(global.roomController.rooms[result].players[0].uniqueID).emit('room-player-status',{allStandBy:true})
+                            }
+                        },500)
+
                     })
                     cb(true);
                 }
@@ -144,11 +158,16 @@ socket.on("notify",function(res,cb)
             //cb(JSON.stringify(msg));
             break;
         case "gameStart":
+
+            console.log("gameStart ↓↓↓")
             console.log(msg)
 
             //检测是否达到游戏开始条件
-            let _ret = global.roomController.checkGameIsPlay(msg.roomID,msg.player.uniqueID)
-            cb(_ret)//返回true or false
+            let _ret = global.roomController.checkGameIsPlay(msg.roomID,msg.player)
+            console.log("_ret : "+_ret)
+
+            cb(_ret)//返回 true or false
+
             if(_ret)
             {
                 //开始游戏
@@ -170,7 +189,14 @@ socket.on("notify",function(res,cb)
                 //告知客户端游戏开始。并发送手牌数据给他们
                 for(let j = 0 ; j < room.players.length; j++)
                 {
-                    socket.to(playersID[j]).emit('gameStart',{player:room.players[j]});
+                    if(j == 0)
+                    {
+                        socket.emit(playersID[j]).emit('gameStart',{player:room.players[j]});
+                    }
+                    else
+                    {
+                        socket.to(playersID[j]).emit('gameStart',{player:room.players[j]});
+                    }
                 }
 
 

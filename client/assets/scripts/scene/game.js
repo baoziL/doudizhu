@@ -18,7 +18,6 @@ cc.Class({
         myPlayerData:cc.Node,
 
         turn:0,
-        //游戏是否能开始
         
     },
 
@@ -27,6 +26,12 @@ cc.Class({
     onLoad () {
 
           
+        let leftPlayerData = cc.find("Canvas/bg/gameMessage/leftPlayerMsg")
+        let rightPlayerData = cc.find("Canvas/bg/gameMessage/rigthPlayerMsg")
+        let myPlayerData = cc.find("Canvas/bg/gameMessage/myPlayerMsg")
+        let gameStartBtn = cc.find("Canvas/bg/gameStart")
+
+
         this._player = 
         {
             roomID:null,
@@ -37,29 +42,91 @@ cc.Class({
 
         this._player.uniqueID = global.socketioController.get_socketID()
 
-        this.myPlayerData.getChildByName("playerID").getComponent(cc.Label).string = this._player.uniqueID
-        let upDataAotherPlayerData = function()
+
+        //游戏信息ID,人员到齐的等待
+        let _playerID = global.socketioController.get_socketID()
+        myPlayerData.getChildByName("playerID").getComponent(cc.Label).string = _playerID
+
+        let upDataPlayerData = function(playerIDAry,playerID)
         {
-            let strL = this.leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string
-            if(strL == null)
+            let site = null;
+            for(let i = 0 ; i < playerIDAry.length;i++)
             {
-                this.leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerID[0];
+                if(playerIDAry[i] === playerID)
+                {
+                    site = i
+                }
             }
-            let strR= this.rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string
-            if(strR == null)
+            console.log("site:"+site)
+            if(site == 0)
             {
-                this.rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerID[1];
+                rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[1];
+                if(playerIDAry.length > 2)
+                {
+                    leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[2];
+                }
+            }
+            else if(site == 1)
+            {
+                leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[0];
+                if(playerIDAry.length > 2)
+                {
+                    rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[2];
+                }
+            }
+            else if(site == 2)
+            {
+                leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[1];
+                if(playerIDAry.length > 2)
+                {
+                    rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[0];
+                }
             }
         }
 
         let playerID = [];
-        global.socketioController.get_socket().on("String",function(res,cb)
+        global.socketioController.get_socket().on("joinRoom",function(res,cb)
         {
-            console.log(res)
-            playerID.push(res)   
-            upDataAotherPlayerData();
+            let temp = [];
+            console.log(res+"joinRoom")
+            for(let i = 0 ; i < res.length;i++)
+            {
+                console.log(res[i])
+                temp.push(res[i].uniqueID)
+                console.log(temp);
+            }
+            upDataPlayerData(temp,_playerID);
             //console.log(cb)
         })
+        let startGame = function(judge)
+        {
+            gameStartBtn.active = judge
+        }
+        global.socketioController.get_socket().on("room-player-status",function(res,cb)
+        {
+            console.log(res)
+            if(res.allStandBy)
+            startGame(res.allStandBy)
+        })
+
+
+        global.socketioController.get_socket().on("gameStart",function(res)
+        {
+            //res: player
+            player.playerData = res.player;
+
+            setTimeout(()=>
+            {
+                global.card.updataHandByAry(player.playerData.cards);
+                console.log("player.playerData↓↓↓↓")
+                console.log(player.playerData)
+            },500)
+        })
+
+
+
+
+
 
 
         // let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
@@ -97,19 +164,40 @@ cc.Class({
     onPlayCardBtnClick()
     {
         //出牌
-        
-        this._player.cards = global.card.getMyHandUpAry();
+        let canPlay = null;
+
+        this._player.playCards = global.card.getMyHandUpAry();
 
         let msg = 
         {
-            player:this._player,
+            player: this._player,
             roomID: global.roomController.roomID,
         }
         global.socketioController.emit({msgType:"playCard",
-        msg:msg},)
-        global.card.playCard();
+        msg:msg})
+
+        let result = global.card.getMyHandUpAry();;
+        if(result.length == 0)
+        {
+            result = false;
+        }
+        else
+        {
+            result = true;
+        }
+
+        if(result && canPlay)
+        {
+            global.card.playCard();
+            canPlay = false;
+        }
+        else
+        {
+            console.log("请重新选择你要出的牌")
+            global.card.updataHandByAry(player.playerData.cards)
+        }
+
         cc.log("出牌")
-        this.playControlNode.active = false;
         cc.log(this.playControlNode)
     },
     onNoPlayBtnClick()
@@ -124,20 +212,40 @@ cc.Class({
     },
     onGameStartBtn()
     {
+        let canStart = null;
         let msg =
         {
             roomID : player.playerData.roomID,
             player : player.playerData,
         }
         global.socketioController.emit({msgType:"gameStart",
-        msg:msg},)
+        msg:msg})
+
+        canStart = player.isGameStart;
+        console.log("canStart : "+canStart)
+        setTimeout(()=>
+        {
+            if(canStart)
+            {
+                cc.find("Canvas/bg/gameStart").active = false;
+            }
+            else
+            {
+                console.log("还没达到游戏开始的条件")
+            }
+        },500)
+
+
     },
     
     //是否你的回合
     isTurn()
     {
         this.playControlNode.active = true;
-    }
+    },
 
-    // update (dt) {},
+    update (dt) {
+
+
+    },
 });

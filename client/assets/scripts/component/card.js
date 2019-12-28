@@ -93,6 +93,10 @@ const card = function()
 
     that.playCard = function()
     {
+        console.log("myHandUpAry : "+myHandUpAry);
+        console.log(myHandUpAry === []);
+
+        if(myHandUpAry.length == 0) return false;
         for(let i = 0; i < myHandAry.length ; i++)
         {
             for(let j = 0 ; j < myHandUpAry.length ; j++)
@@ -105,10 +109,12 @@ const card = function()
                 }
             }
         }
+
         that.updataMyOut(myHandUpAry)
 
         that.updataHandByAry(myHandAry)
 
+        return true;
     };
 
     that.updataHandByAry = function(ary)

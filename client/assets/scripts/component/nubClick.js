@@ -193,12 +193,12 @@ cc.Class({
 
         let _roomID = aryToString(nub);
 
-        global.roomController.roomID = _roomID
+        player.playerData.roomID = _roomID
 
         let _data = {
 
             msgType:"joinRoom",
-            msg:{player:_player,roomID:_roomID}
+            msg:{player:_player.playerData,roomID:_player.playerData.roomID}
         }
 
         global.socketioController.emit(_data)
@@ -213,7 +213,7 @@ cc.Class({
             {
                 console.log("房间人数满了")
             }
-            console.log(player.isJoinRoom);
+            //console.log(player.isJoinRoom);
         },200
         )
 

@@ -33,6 +33,7 @@ const socketioController = function()
         {
             let msgType = data.msgType
 
+
             switch(msgType)
             {
                 case "login":
@@ -42,6 +43,7 @@ const socketioController = function()
                 case "joinRoom":
 
                     player.isJoinRoom = cb;
+
                     break;
                 case "returnRoom":
 
@@ -58,6 +60,7 @@ const socketioController = function()
                 case "gameStart":
 
                     player.isGameStart = cb;
+                    
                     break;                      
 
                 default:
