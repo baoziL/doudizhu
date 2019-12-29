@@ -3,6 +3,7 @@ const soketioController = require("./soketioControl.js");
 const roomController = require("./roomController.js")
 const game = require("./game.js")
 
+
 const global = {};
 
 global.playData = playData();

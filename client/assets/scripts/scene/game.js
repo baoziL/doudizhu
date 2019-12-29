@@ -55,6 +55,7 @@ cc.Class({
                 if(playerIDAry[i] === playerID)
                 {
                     site = i
+                    player.playerData.index = site;
                 }
             }
             console.log("site:"+site)
@@ -94,6 +95,7 @@ cc.Class({
                 console.log(res[i])
                 temp.push(res[i].uniqueID)
                 console.log(temp);
+                player.roomData = temp;
             }
             upDataPlayerData(temp,_playerID);
             //console.log(cb)
@@ -112,7 +114,7 @@ cc.Class({
 
         global.socketioController.get_socket().on("gameStart",function(res)
         {
-            //res: player
+            //res: 0player 
             player.playerData = res.player;
 
             setTimeout(()=>
@@ -121,6 +123,18 @@ cc.Class({
                 console.log("player.playerData↓↓↓↓")
                 console.log(player.playerData)
             },500)
+        })
+
+        global.socketioController.get_socket().on("playCard",function(res)
+        {
+            //res: player
+            // player.playerData = res.player;
+            // setTimeout(()=>
+            // {
+            //     global.card.updataHandByAry(player.playerData.cards);
+            //     console.log("player.playerData↓↓↓↓")
+            //     console.log(player.playerData)
+            // },500)
         })
 
 
@@ -170,13 +184,13 @@ cc.Class({
 
         let msg = 
         {
-            player: this._player,
-            roomID: global.roomController.roomID,
+            player: player.playerData,
+            roomID: player.playerData.roomID,
         }
         global.socketioController.emit({msgType:"playCard",
         msg:msg})
 
-        let result = global.card.getMyHandUpAry();;
+        let result = global.card.getMyHandUpAry();
         if(result.length == 0)
         {
             result = false;

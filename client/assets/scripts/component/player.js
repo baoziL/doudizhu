@@ -13,7 +13,10 @@ const player =
         roomID:null,
         cards:null,
         playCards:null,
+        index:0,
     },
+    //这局游戏的存储玩家ID/0，1，2
+    roomData:[],
 
     getPlayerData : function()
     {
@@ -27,9 +30,20 @@ const player =
         playerData.avatarUrl = _playerData.avatarUrl
         console.log(playerData);
     },
-    test : function()
+    initPlayer : function()
     {
-        cc.log("test11111")
+        isJoinRoom = null;
+        isGameStart = null;
+        playerData =
+        {
+            uniqueID: null, 
+            nickName: null, 
+            avatarUrl: null,
+            roomID:null,
+            cards:null,
+            playCards:null,
+            index:0,
+        };
     },
 }
 module.exports = player;

@@ -153,8 +153,18 @@ socket.on("notify",function(res,cb)
             console.log(msg)
             break;
         case "playCard":
+            //msg  0playerData 1roomID
+            console.log(msg);
+
+
+            let __room = global.roomController.checkRoom(msg.roomID)
+            global.game.playCard(__room,msg.player)
+
+
+
             // global.soketioController.app.sockets.emit('String',msg.player.uniquenID+"打出"+msg.player.cards);
-            socket.broadcast.to(msg.roomID).emit('String',msg.player.uniqueID+"打出"+msg.player.cards)
+            socket.broadcast.to(msg.roomID).emit('playCard',msg.player.uniqueID+"打出"+msg.player.cards)
+
             //cb(JSON.stringify(msg));
             break;
         case "gameStart":
