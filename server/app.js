@@ -37,21 +37,14 @@ socket.on("notify",function(res,cb)
             let result = global.roomController.checkRoom(msg.roomID)
             console.log("result : "+result)
 
-            let _player = {
-
-                uniqueID: msg.player.uniqueID, 
-                nickName: "nickname", 
-                avatarUrl: "avatar",
-            }
+            let _player = msg.player
 
 
             if(result === false)
             {
                 //如果没有房间 创建房间 并加入该玩家
                 let _room = new room;
-                _room.players.push({        uniqueID: msg.player.uniqueID, 
-                nickName: "nickname", 
-                avatarUrl: "avatar",});
+                _room.players.push(_player);
 
                 _room.roomID = msg.roomID;
 
@@ -155,16 +148,25 @@ socket.on("notify",function(res,cb)
         case "playCard":
             //msg  0playerData 1roomID
             console.log(msg);
-
-
-            let __room = global.roomController.checkRoom(msg.roomID)
-            global.game.playCard(__room,msg.player)
-
-
-
-            // global.soketioController.app.sockets.emit('String',msg.player.uniquenID+"打出"+msg.player.cards);
-            socket.broadcast.to(msg.roomID).emit('playCard',msg.player.uniqueID+"打出"+msg.player.cards)
-
+            let _roomIndex = global.roomController.checkRoom(msg.roomID)
+            let __room = global.roomController.rooms[_roomIndex]
+            console.log("__room ↓↓↓")
+            console.log(__room)
+            let __result = global.game.playCard(__room,msg.player)
+            if(__result)
+            {
+              //更新room信息
+              global.roomController.upDataRoomData(msg.roomID,msg.player,__room);
+              //返回是否能出牌
+              cb({result:__result,playerData:__room.players[msg.player.index]})
+              //发送信息给客户端
+              let _data = {uniqueID:msg.player.uniqueID,playCards:msg.player.cards,playIndex:msg.player.index}
+              socket.broadcast.to(msg.roomID).emit('playCard',_data)
+            }
+            else
+            {
+              cb(__result)
+            }
             //cb(JSON.stringify(msg));
             break;
         case "gameStart":
@@ -183,6 +185,8 @@ socket.on("notify",function(res,cb)
                 //开始游戏
                 //游戏初始化
                 let playersCard = global.game.iniGame();
+                console.log("playersCard↓↓↓");
+                console.log(playersCard);
 
                 let room =
                 global.roomController.rooms[global.roomController.checkRoom(msg.roomID)]

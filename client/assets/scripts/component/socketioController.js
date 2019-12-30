@@ -55,12 +55,14 @@ const socketioController = function()
                     break;
                 case "playCard":
 
-
+                    player.isCanPlayer = cb.result;
+                    //更新playerData
+                    player.playerData = cb.playerData;
                     break;
                 case "gameStart":
 
                     player.isGameStart = cb;
-                    
+
                     break;                      
 
                 default:
@@ -93,7 +95,6 @@ const socketioController = function()
                     break;
                 case "playCard":
                     console.log(msg)
-                    cb(JSON.stringify(msg));
                     break;
                 case "createRoom":
                     console.log(msg)

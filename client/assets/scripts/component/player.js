@@ -5,6 +5,8 @@ const player =
     //游戏是否能开始
     isGameStart: null,
 
+    isCanPlayer: null,
+
     playerData :
     {
         uniqueID: null, 
@@ -17,6 +19,9 @@ const player =
     },
     //这局游戏的存储玩家ID/0，1，2
     roomData:[],
+    leftPlayer:null,
+    rightPlayer:null,
+    index:null,
 
     getPlayerData : function()
     {
@@ -30,10 +35,11 @@ const player =
         playerData.avatarUrl = _playerData.avatarUrl
         console.log(playerData);
     },
-    initPlayer : function()
+    initPlayer : function(playerData)
     {
-        isJoinRoom = null;
-        isGameStart = null;
+        this.isJoinRoom = null;
+        this.isGameStart = null;
+        this.isCanPlayer = null
         playerData =
         {
             uniqueID: null, 
@@ -42,8 +48,14 @@ const player =
             roomID:null,
             cards:null,
             playCards:null,
-            index:0,
+            index:null,
         };
     },
+    clearPlayerSate : function()
+    {
+        this.isJoinRoom = null;
+        this.isGameStart = null;
+        this.isCanPlayer = null;
+    }
 }
 module.exports = player;

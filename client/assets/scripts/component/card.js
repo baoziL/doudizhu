@@ -126,17 +126,18 @@ const card = function()
 
     that.updataMyOut = function(ary)
     {
-        
         ary = myHandUpAry//test
         ary.cardSort(1);
         updataCard(cc.find("Canvas/bg/my/out"),ary);
     };
     that.updataLeftOut = function(ary)
     {
+        ary.cardSort(1);
         updataCard(cc.find("Canvas/bg/left/out"),ary);
     };
     that.updataRightOut = function(ary)
     {
+        ary.cardSort(1);
         updataCard(cc.find("Canvas/bg/right/out"),ary);
     };
 

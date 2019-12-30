@@ -32,22 +32,14 @@ cc.Class({
         let gameStartBtn = cc.find("Canvas/bg/gameStart")
 
 
-        this._player = 
-        {
-            roomID:null,
-            uniqueID:null,
-            cards:null,
-            playCards:null,
-        }
-
-        this._player.uniqueID = global.socketioController.get_socketID()
+        player.playerData.uniqueID = global.socketioController.get_socketID()
 
 
         //游戏信息ID,人员到齐的等待
         let _playerID = global.socketioController.get_socketID()
         myPlayerData.getChildByName("playerID").getComponent(cc.Label).string = _playerID
 
-        let upDataPlayerData = function(playerIDAry,playerID)
+        let upDataPlayerMsg = function(playerIDAry,playerID)
         {
             let site = null;
             for(let i = 0 ; i < playerIDAry.length;i++)
@@ -55,7 +47,7 @@ cc.Class({
                 if(playerIDAry[i] === playerID)
                 {
                     site = i
-                    player.playerData.index = site;
+                    player.index = site;
                 }
             }
             console.log("site:"+site)
@@ -66,6 +58,8 @@ cc.Class({
                 {
                     leftPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[2];
                 }
+                player.leftPlayer = 2;
+                player.rightPlayer = 1;
             }
             else if(site == 1)
             {
@@ -74,6 +68,8 @@ cc.Class({
                 {
                     rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[2];
                 }
+                player.leftPlayer = 0;
+                player.rightPlayer = 2;
             }
             else if(site == 2)
             {
@@ -82,6 +78,8 @@ cc.Class({
                 {
                     rightPlayerData.getChildByName("playerID").getComponent(cc.Label).string = playerIDAry[0];
                 }
+                player.leftPlayer = 1;
+                player.rightPlayer = 0;
             }
         }
 
@@ -97,7 +95,9 @@ cc.Class({
                 console.log(temp);
                 player.roomData = temp;
             }
-            upDataPlayerData(temp,_playerID);
+            upDataPlayerMsg(temp,_playerID);
+            console.log("player.playerData ↓↓↓");
+            console.log(player.playerData);
             //console.log(cb)
         })
         let startGame = function(judge)
@@ -116,6 +116,7 @@ cc.Class({
         {
             //res: 0player 
             player.playerData = res.player;
+            player.playerData.index = player.index;
 
             setTimeout(()=>
             {
@@ -127,21 +128,17 @@ cc.Class({
 
         global.socketioController.get_socket().on("playCard",function(res)
         {
-            //res: player
-            // player.playerData = res.player;
-            // setTimeout(()=>
-            // {
-            //     global.card.updataHandByAry(player.playerData.cards);
-            //     console.log("player.playerData↓↓↓↓")
-            //     console.log(player.playerData)
-            // },500)
+            console.log(res);
+            //res: uniqueID 出牌人ID ， playCards 出的牌  palyerIndex 该玩家再这局游戏的位置
+            if(res.palyerIndex == player.leftPlayer)
+            {
+                global.card.updataLeftOut(res.playCards)
+            }
+            else if(res.palyerIndex == player.rightPlayer)
+            {
+                global.card.updataRightOut(res.playCards)
+            }
         })
-
-
-
-
-
-
 
         // let msg = {msgType:"joinRoom",msg:{player:this._player,roomID:8888}}
         //global.socketioController.emit(msg);
@@ -178,9 +175,13 @@ cc.Class({
     onPlayCardBtnClick()
     {
         //出牌
-        let canPlay = null;
+        console.log("player.playerData↓↓↓")
+        console.log(player.playerData)
+        console.log("global.card.getMyHandUpAry()↓↓↓")
+        console.log(global.card.getMyHandUpAry())
+        player.playerData.playCards = global.card.getMyHandUpAry();
+        let cards = player.playerData.cards;
 
-        this._player.playCards = global.card.getMyHandUpAry();
 
         let msg = 
         {
@@ -200,17 +201,21 @@ cc.Class({
             result = true;
         }
 
-        if(result && canPlay)
+        setTimeout(()=>
         {
-            global.card.playCard();
-            canPlay = false;
-        }
-        else
-        {
-            console.log("请重新选择你要出的牌")
-            global.card.updataHandByAry(player.playerData.cards)
-        }
+            if(result && player.isCanPlayer)
+            {
+                global.card.playCard();
+                //
+                player.clearPlayerSate();
+            }
+            else
+            {
+                console.log("请重新选择你要出的牌")
 
+                global.card.updataHandByAry(cards)
+            }
+        },500)
         cc.log("出牌")
         cc.log(this.playControlNode)
     },
