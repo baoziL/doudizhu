@@ -39,11 +39,11 @@ const buttonController = function()
     /**
      *开启或者关闭第一层button点击
      *参数说明 0 开启 1 关闭
-	@param nub nub
+	@param num num
 	*/
-    that.setNowFloor = function(nub)
+    that.setNowFloor = function(num)
     {
-        that.nowFloor = nub;
+        that.nowFloor = num;
         that.checkNowFloor();
     }
 

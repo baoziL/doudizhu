@@ -114,7 +114,7 @@ cc.Class({
 
         global.socketioController.get_socket().on("gameStart",function(res)
         {
-            //res: 0player 
+            //res: 0 player 
             player.playerData = res.player;
             player.playerData.index = player.index;
 
